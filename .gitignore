@@ -1,0 +1,29 @@
+# Arduino IDE
+*.hex
+*.elf
+*.bin
+*.map
+
+# PlatformIO
+.pio
+.vscode
+.pioenvs
+.piolibdeps
+.clang_complete
+.gcc-flags.json
+
+# Build artifacts
+build/
+dist/
+
+# IDE specific files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Credentials (backup if someone commits config with credentials)
+config.h
+secrets.h
