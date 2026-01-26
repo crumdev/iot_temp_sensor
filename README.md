@@ -52,6 +52,8 @@ Firmware link: https://github.com/nodemcu/nodemcu-firmware
 
 [Wiring Diagram](https://app.cirkitdesigner.com/project/722b8de2-65ae-44b0-82d6-fbf1d12de764)
 
+![wiring diagram](docs/circuit_image.svg)
+
 ```
 Pin Connections:
 ┌──────────────┬─────────────────────┬───────────────────────┐
@@ -71,8 +73,8 @@ Pin Connections:
 
 2. **Make the Connections** (with NodeMCU unplugged)
    - Connect DHT VCC → NodeMCU 3.3V (red wire)
-   - Connect DHT DATA → NodeMCU D4 (yellow/green wire)
-   - Connect DHT GND → NodeMCU GND (black wire)
+   - Connect DHT DATA → NodeMCU D4 (yellow wire)
+   - Connect DHT GND → NodeMCU GND (green wire)
 
 3. **Verify Connections**
    - Double-check all connections match the diagram
