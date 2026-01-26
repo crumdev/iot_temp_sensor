@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Temperature & Humidity Monitor</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      margin: 0;
+      padding: 20px;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    .container {
+      background: white;
+      border-radius: 20px;
+      padding: 40px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+      max-width: 600px;
+      width: 100%;
+    }
+    h1 {
+      color: #333;
+      text-align: center;
+      margin-bottom: 40px;
+      font-size: 2em;
+    }
+    .sensor-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+      margin-bottom: 30px;
+    }
+    .sensor-card {
+      background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+      border-radius: 15px;
+      padding: 30px;
+      text-align: center;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    }
+    .sensor-card.temp {
+      background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+    }
+    .sensor-card.humidity {
+      background: linear-gradient(135deg, #30cfd0 0%, #330867 100%);
+    }
+    .sensor-icon {
+      font-size: 3em;
+      margin-bottom: 10px;
+    }
+    .sensor-value {
+      font-size: 3em;
+      font-weight: bold;
+      color: #fff;
+      text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+    }
+    .sensor-unit {
+      font-size: 1.2em;
+      color: #fff;
+      margin-top: 5px;
+      opacity: 0.9;
+    }
+    .sensor-label {
+      font-size: 1.2em;
+      color: #fff;
+      margin-top: 10px;
+      font-weight: 500;
+    }
+    .info {
+      background: #f0f4f8;
+      border-radius: 10px;
+      padding: 20px;
+      margin-top: 20px;
+    }
+    .info h3 {
+      margin-top: 0;
+      color: #555;
+    }
+    .info p {
+      margin: 5px 0;
+      color: #666;
+    }
+    .info a {
+      color: #667eea;
+      text-decoration: none;
+    }
+    .info a:hover {
+      text-decoration: underline;
+    }
+    .refresh-btn {
+      background: #667eea;
+      color: white;
+      border: none;
+      padding: 12px 30px;
+      border-radius: 25px;
+      font-size: 1em;
+      cursor: pointer;
+      margin-top: 20px;
+      width: 100%;
+      transition: background 0.3s;
+    }
+    .refresh-btn:hover {
+      background: #5568d3;
+    }
+    .auto-refresh {
+      text-align: center;
+      color: #666;
+      margin-top: 10px;
+      font-size: 0.9em;
+    }
+    @media (max-width: 600px) {
+      .sensor-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>🌡️ Temperature & Humidity Monitor</h1>
+    <div class="sensor-grid">
+      
+      <!-- Temperature card -->
+      <div class="sensor-card temp">
+        <div class="sensor-icon">🌡️</div>
+        <div class="sensor-value" id="temp">--</div>
+        <div class="sensor-unit">°F</div>
+        <div class="sensor-label">Temperature</div>
+      </div>
+      
+      <!-- Humidity card -->
+      <div class="sensor-card humidity">
+        <div class="sensor-icon">💧</div>
+        <div class="sensor-value" id="humidity">--</div>
+        <div class="sensor-unit">%</div>
+        <div class="sensor-label">Humidity</div>
+      </div>
+      
+    </div>
+    
+    <!-- Info section -->
+    <div class="info">
+      <h3>📊 System Information</h3>
+      <p><strong>Device:</strong> ESP8266 NodeMCU</p>
+      <p><strong>Sensor:</strong> DHT11</p>
+      <p><strong>API Endpoint:</strong> <a href="/api/data">/api/data</a></p>
+      <p><strong>Last Update:</strong> <span id="lastUpdate">--</span></p>
+    </div>
+    
+    <button class="refresh-btn" onclick="refreshData()">🔄 Refresh Now</button>
+    <div class="auto-refresh">Auto-refreshes every 5 seconds</div>
+  </div>
+
+  <script>
+    function refreshData() {
+      fetch('/api/data')
+        .then(response => response.json())
+        .then(data => {
+          document.getElementById('temp').innerText = data.temperature.toFixed(1);
+          document.getElementById('humidity').innerText = data.humidity.toFixed(1);
+          document.getElementById('lastUpdate').innerText = new Date().toLocaleTimeString();
+        })
+        .catch(error => console.error('Error:', error));
+    }
+    
+    // Fetch data immediately on page load
+    refreshData();
+    
+    // Auto-refresh every 5 seconds
+    setInterval(refreshData, 5000);
+  </script>
+</body>
+</html>

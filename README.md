@@ -13,20 +13,75 @@ Code for configuring ESP8266 NodeMCU project to monitor temperature and humidity
 
 ## Hardware Requirements
 
-- **ESP8266 NodeMCU** development board
-- **DHT22** (AM2302) or **DHT11** temperature and humidity sensor
-- Jumper wires
-- USB cable for programming and power
+### Parts List
+
+| Qty | Component | Specifications | Notes |
+|-----|-----------|----------------|-------|
+| 1 | ESP8266 NodeMCU | NodeMCU V2 (ESP-12E Module) | Development board with WiFi |
+| 1 | DHT11 or DHT22 Sensor | Temperature & Humidity Sensor | DHT22 is more accurate but DHT11 works fine |
+| 3 | Jumper Wires | Male-to-Female or Male-to-Male | For connections |
+| 1 | Breadboard | Half-size or full-size (optional) | For prototyping |
+| 1 | USB Cable | Micro-USB | For programming and power |
+| 1 | 10kΩ Resistor | Pull-up resistor (optional) | May improve DHT reliability |
+
+**Estimated Total Cost:** $8-15 USD (depending on sensor choice)
+
+### Where to Buy
+- **Amazon:** Search for "ESP8266 NodeMCU DHT11 kit"
+- **AliExpress/eBay:** Individual components at lower cost
+- **Adafruit/SparkFun:** Quality components with documentation
+
+### Nodemcu Board Description
+
+Description:
+ESP8266 is a highly integrated chip designed for the needs of a new connected world. It offers a complete and self-contained networking solution, allowing it to either host the application or to offload from another application processor.
+
+Instruction & Steps of How to use:
+1. Download the Arduino IDE, the latest version.
+2. Install the IDE
+3. Set up your Arduino IDE as: Go to File->Preferences and copy the URL below to get the ESP board manager extensions: arduino.esp8266.com/stable/package_esp8266com_index.json
+4. Go to Tools > Board > Board Manager> Type "esp8266" and download the Community esp8266 and install.
+5. Set up your chip as: Tools -> Board -> NodeMCU 1.0 (ESP-12E Module) Tools -> Flash Size -> 4M (3M SPIFFS) Tools -> CPU Frequency -> 80 Mhz Tools -> Upload Speed -> 921600 Tools-->Port--> (whatever it is)
+6. Download and run the 32 bit flasher exe at Github(Search for nodemcu/nodemcu-flasher/tree/master/ at Github) github.com/nodemcu/nodemcu-flasher/tree/master/Win32/Release Or download and run the 64 bit flasher exe at: github.com/nodemcu/nodemcu-flasher/tree/master/Win64/Release
+7. In Arduino IDE, look for the old fashioned Blink program. Load, compile and upload. 8. Go to FILE> EXAMPLES> ESP8266> BLINK, it will start blinking.
+
+Data download access to the website: http://www.nodemcu.com/index_en.html
+Firmware link: https://github.com/nodemcu/nodemcu-firmware
 
 ### Wiring Diagram
 
+[Wiring Diagram](https://app.cirkitdesigner.com/project/722b8de2-65ae-44b0-82d6-fbf1d12de764)
+
 ```
-DHT Sensor    ESP8266 NodeMCU
-----------    ---------------
-VCC       ->  3.3V
-GND       ->  GND
-DATA      ->  D4 (GPIO2)
+Pin Connections:
+┌──────────────┬─────────────────────┬───────────────────────┐
+│ DHT Sensor   │ ESP8266 NodeMCU     │ Description           │
+├──────────────┼─────────────────────┼───────────────────────┤
+│ VCC (Pin 1)  │ 3.3V                │ Power supply          │
+│ DATA (Pin 2) │ D4 (GPIO2)          │ Data signal           │
+│ GND (Pin 4)  │ GND                 │ Ground                │
+└──────────────┴─────────────────────┴───────────────────────┘
 ```
+
+### Assembly Instructions
+
+1. **Prepare the DHT Sensor**
+   - If using a module (pre-mounted on PCB), it's ready to use
+   - If using a bare sensor, consider adding a 10kΩ pull-up resistor
+
+2. **Make the Connections** (with NodeMCU unplugged)
+   - Connect DHT VCC → NodeMCU 3.3V (red wire)
+   - Connect DHT DATA → NodeMCU D4 (yellow/green wire)
+   - Connect DHT GND → NodeMCU GND (black wire)
+
+3. **Verify Connections**
+   - Double-check all connections match the diagram
+   - Ensure no wires are loose or touching each other
+
+4. **Power Up**
+   - Connect NodeMCU to computer via USB cable
+   - The blue LED on NodeMCU should light up
+   - DHT sensor should receive power (some have indicator LEDs)
 
 ## Software Requirements
 
