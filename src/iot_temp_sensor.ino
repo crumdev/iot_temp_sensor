@@ -169,7 +169,8 @@ void readSensorData() {
   Serial.println("%");
   
   // Send data to TCP server
-  sendDataToTCP();
+  // if graphiteServerAddress is undefined or empty, skip sending
+  sendDataToGraphite();
 }
 
 // Get formatted timestamp
@@ -186,8 +187,13 @@ long getUnixTimestamp() {
   return time(nullptr);
 }
 
-void sendDataToTCP() {
-  if (tcpClient.connect(tcpServer, tcpPort)) {
+void sendDataToGraphite() {
+  // Skip sending if no Graphite endpoint is configured
+  if (graphiteServerAddress == nullptr || graphiteServerAddress[0] == '\0') {
+    return;
+  }
+
+  if (tcpClient.connect(graphiteServerAddress, tcpPort)) {
     // Get timestamp
     long timestamp = getUnixTimestamp();
     String timeStr = getFormattedTime();

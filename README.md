@@ -50,7 +50,7 @@ Firmware link: https://github.com/nodemcu/nodemcu-firmware
 
 ### Wiring Diagram
 
-[Wiring Diagram](https://app.cirkitdesigner.com/project/722b8de2-65ae-44b0-82d6-fbf1d12de764)
+[Interactive Wiring Diagram](https://app.cirkitdesigner.com/project/722b8de2-65ae-44b0-82d6-fbf1d12de764)
 
 ![wiring diagram](docs/circuit_image.svg)
 
@@ -87,61 +87,37 @@ Pin Connections:
 
 ## Software Requirements
 
-### Arduino IDE Setup
+### VS Code + PlatformIO Setup (Recommended)
 
-1. **Install Arduino IDE** (version 1.8.x or higher)
-   - Download from: https://www.arduino.cc/en/software
-
-2. **Add ESP8266 Board Support**
-   - Open Arduino IDE
-   - Go to `File` → `Preferences`
-   - Add to "Additional Board Manager URLs":
-     ```
-     http://arduino.esp8266.com/stable/package_esp8266com_index.json
-     ```
-   - Go to `Tools` → `Board` → `Boards Manager`
-   - Search for "esp8266" and install "esp8266 by ESP8266 Community"
-
-3. **Install Required Libraries**
-   - Go to `Sketch` → `Include Library` → `Manage Libraries`
-   - Install the following libraries:
-     - **DHT sensor library** by Adafruit (also installs Adafruit Unified Sensor)
-     - **ESP8266WiFi** (included with ESP8266 board package)
-     - **ESP8266WebServer** (included with ESP8266 board package)
-
-## Configuration
-
-1. **Open the sketch** `iot_temp_sensor.ino` in Arduino IDE
-
-2. **Configure WiFi credentials**:
-   ```cpp
-   const char* ssid = "YOUR_WIFI_SSID";      // Replace with your WiFi SSID
-   const char* password = "YOUR_WIFI_PASSWORD"; // Replace with your WiFi password
+1. Install **Visual Studio Code**: https://code.visualstudio.com/
+2. Install **PlatformIO IDE** extension (ID: `platformio.platformio-ide`) from the VS Code Extensions view.
+3. **Clone or open** this repo in VS Code: `git clone https://github.com/your/repo.git && code iot_temp_sensor` (or open the folder directly).
+4. Plug in the **ESP8266 NodeMCU** with a micro-USB cable. If Windows asks for drivers, install the CH340/CP210x USB-to-UART driver used by your board.
+5. Wait for PlatformIO to finish **automatically installing toolchains and libraries** (progress shows in the status bar).
+6. Create a src/config.h file and configure your WiFi SSID and password as shown below
+   ```c++
+   // WiFi Configuration
+   const char* ssid = "MySSID";      // Replace with your WiFi SSID
+   const char* password = "Password"; // Replace with your WiFi password
+   
+   // optional Graphite server configuration (leave undefined or empty to disable)
+   const char* graphiteServerAddress = "graphite.lan";
    ```
-
-3. **Configure sensor type** (if using DHT11 instead of DHT22):
-   ```cpp
-   #define DHTTYPE DHT11   // Change from DHT22 to DHT11
-   ```
-
-4. **Select board and port**:
-   - Go to `Tools` → `Board` → `ESP8266 Boards` → `NodeMCU 1.0 (ESP-12E Module)`
-   - Go to `Tools` → `Port` → Select your ESP8266's COM port
-
-5. **Upload the sketch**:
-   - Click the Upload button (→) or press `Ctrl+U`
-   - Wait for compilation and upload to complete
+7. **Build firmware**: PlatformIO sidebar → Project Tasks → `env:nodemcuv2` → General → **Build** (checkmark) or use the bottom bar ✓.
+8. **Upload LittleFS assets** (serves the web UI): PlatformIO sidebar → Project Tasks → `env:nodemcuv2` → Platform → **Upload Filesystem Image**.
+9. **Flash firmware**: PlatformIO sidebar → Project Tasks → `env:nodemcuv2` → General → **Upload** (right-arrow). If the port is wrong, set `upload_port` in `platformio.ini` or pick the correct COM port in the VS Code status bar.
+10. **Serial monitor**: PlatformIO → Project Tasks → `env:nodemcuv2` → General → **Monitor** (or bottom bar plug icon) at **115200 baud**. Copy the printed IP address.
+11. Open the web UI at `http://<device-ip>` or call the API at `/api/data`.
 
 ## Usage
 
 ### Web Interface
 
-1. After uploading, open the Serial Monitor (`Tools` → `Serial Monitor`)
-2. Set baud rate to **115200**
-3. Wait for the device to connect to WiFi
-4. Note the IP address displayed (e.g., `192.168.1.100`)
-5. Open a web browser and navigate to: `http://[IP_ADDRESS]`
-6. View the graphical display of temperature and humidity
+1. After flashing via PlatformIO, open the Serial Monitor from Project Tasks → `env:nodemcuv2` → General → **Monitor** (or the plug icon in the bottom bar)
+2. Confirm baud rate is **115200**
+3. Wait for WiFi connection; PlatformIO monitor will print the IP (e.g., `192.168.1.100`)
+4. Open a browser to `http://[IP_ADDRESS]`
+5. View the graphical display of temperature and humidity
 
 The web interface features:
 - Large, easy-to-read temperature and humidity displays
@@ -186,36 +162,6 @@ data = response.json()
 print(f"Temperature: {data['temperature']}°F")
 print(f"Humidity: {data['humidity']}%")
 ```
-
-### Integration with Timeseries Databases
-
-#### InfluxDB Example
-```python
-from influxdb import InfluxDBClient
-import requests
-import time
-
-client = InfluxDBClient(host='localhost', port=8086, database='sensors')
-
-while True:
-    response = requests.get('http://192.168.1.100/api/data')
-    data = response.json()
-    
-    json_body = [{
-        "measurement": "climate",
-        "tags": {"device": "basement_sensor"},
-        "fields": {
-            "temperature": data['temperature'],
-            "humidity": data['humidity']
-        }
-    }]
-    
-    client.write_points(json_body)
-    time.sleep(60)  # Poll every 60 seconds
-```
-
-#### Prometheus Example
-You can scrape the metrics using a custom exporter that polls the `/api/data` endpoint.
 
 ## Troubleshooting
 
