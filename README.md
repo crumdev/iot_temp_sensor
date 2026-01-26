@@ -2,6 +2,8 @@
 
 Code for configuring ESP8266 NodeMCU project to monitor temperature and humidity with HTTP server interface.
 
+![web interface screenshot](docs/screenshot.png)
+
 ## Features
 
 - 🌡️ Real-time temperature monitoring (displayed in Fahrenheit)
